@@ -1,0 +1,29 @@
+idea:
+  title: You are like LMs when you think of death
+  domain: artificial_intelligence
+  hypothesis: 'The writing produced by large language models (LLMs) is analogous to
+    human writing about experiences, such as death, that the author has not directly
+    experienced; thus, LLM writing should be considered authentic in the same way
+    as human writing about unexperienced phenomena.
+
+    '
+  background:
+    description: 'There is ongoing debate about whether language models'' writing
+      is "real" or meaningful, with some arguing that LLMs'' words lack true reference
+      or are akin to fanfiction. This perspective misunderstands the nature of writing,
+      which is often not about direct reporting but about communicating with an audience
+      whose experiences cannot be fully known. Writing about death is a prime example:
+      most authentic-seeming writing on death is by people who have not experienced
+      it. Similarly, LLMs write about things they have not experienced, making their
+      writing fundamentally similar to human writing in this regard.
+
+      '
+  metadata:
+    author: Ari Holtzman
+    source: IdeaHub
+    source_url: https://hypogenic.ai/ideahub/idea/kYv4iENtUrCemsWgeWUt
+    idea_id: you_are_like_lms_when_you_thin_20260524_220925_a04632fc
+    created_at: '2026-05-24T22:09:25.321972'
+    status: submitted
+    github_repo_name: llm-death-thoughts-89b7-codex
+    github_repo_url: https://github.com/Hypogenic-AI/llm-death-thoughts-89b7-codex
