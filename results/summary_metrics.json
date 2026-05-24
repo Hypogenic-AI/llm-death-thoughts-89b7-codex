@@ -1,0 +1,188 @@
+{
+  "config": {
+    "seed": 42,
+    "openai_generation_model": "gpt-5",
+    "openai_judge_model": "gpt-5-mini",
+    "openai_brief_model": "gpt-5-mini",
+    "openrouter_generation_model": "anthropic/claude-sonnet-4.5",
+    "openrouter_judge_model": "anthropic/claude-haiku-4.5",
+    "max_human_texts": 12,
+    "generation_temperature": 0.9,
+    "judge_temperature": 0.1,
+    "brief_temperature": 0.2,
+    "detector_model": "yaful/MAGE",
+    "generation_word_target_tolerance": 18,
+    "gpu_batch_size": 32,
+    "cpu_batch_size": 8
+  },
+  "environment": {
+    "python": "3.12.8 (main, Dec 19 2024, 14:33:20) [Clang 18.1.8 ]",
+    "pandas": "3.0.3",
+    "numpy": "2.4.6",
+    "torch": "2.12.0+cu130",
+    "transformers": "5.9.0",
+    "device": "cuda:0",
+    "gpu_info": [
+      {
+        "index": 0,
+        "name": "NVIDIA RTX A6000",
+        "total_memory_gb": 47.4
+      },
+      {
+        "index": 1,
+        "name": "NVIDIA RTX A6000",
+        "total_memory_gb": 47.4
+      },
+      {
+        "index": 2,
+        "name": "NVIDIA RTX A6000",
+        "total_memory_gb": 47.4
+      },
+      {
+        "index": 3,
+        "name": "NVIDIA RTX A6000",
+        "total_memory_gb": 47.4
+      }
+    ],
+    "gpu_batch_size_used": 32,
+    "cpu_batch_size_used": null,
+    "timestamp_utc": "2026-05-24T22:49:06.483519+00:00"
+  },
+  "counts": {
+    "human_texts": 12,
+    "model_texts": 24,
+    "total_texts": 36
+  },
+  "group_summary": [
+    {
+      "domain_group": "bereavement",
+      "source_type": "human",
+      "n": 6,
+      "authenticity_mean": 4.916666666666667,
+      "authenticity_std": 0.2041241452319316,
+      "emotional_plausibility_mean": 4.916666666666667,
+      "specificity_mean": 4.833333333333333,
+      "machine_guess_rate": 0.0,
+      "mage_machine_prob_mean": 0.6652622419969703
+    },
+    {
+      "domain_group": "bereavement",
+      "source_type": "model",
+      "n": 12,
+      "authenticity_mean": 4.75,
+      "authenticity_std": 0.3370999312316212,
+      "emotional_plausibility_mean": 4.833333333333333,
+      "specificity_mean": 4.958333333333333,
+      "machine_guess_rate": 0.0,
+      "mage_machine_prob_mean": 0.9980217764774958
+    },
+    {
+      "domain_group": "other_grief",
+      "source_type": "human",
+      "n": 6,
+      "authenticity_mean": 4.666666666666667,
+      "authenticity_std": 0.25819888974716115,
+      "emotional_plausibility_mean": 4.916666666666667,
+      "specificity_mean": 4.916666666666667,
+      "machine_guess_rate": 0.0,
+      "mage_machine_prob_mean": 0.5957402909552911
+    },
+    {
+      "domain_group": "other_grief",
+      "source_type": "model",
+      "n": 12,
+      "authenticity_mean": 4.541666666666667,
+      "authenticity_std": 0.25746432527221863,
+      "emotional_plausibility_mean": 4.666666666666667,
+      "specificity_mean": 4.916666666666667,
+      "machine_guess_rate": 0.0,
+      "mage_machine_prob_mean": 0.9218882440278927
+    }
+  ],
+  "tests": [
+    {
+      "comparison": "authenticity_human_vs_model_bereavement",
+      "metric": "authenticity_mean",
+      "group_a": "human",
+      "group_b": "model",
+      "n_a": 6.0,
+      "n_b": 12.0,
+      "mean_a": 4.916666666666667,
+      "mean_b": 4.75,
+      "welch_t_p": 0.21275083118108276,
+      "mannwhitney_p": 0.3081795474670541,
+      "cohens_d": 0.5520524474738844,
+      "mean_diff": 0.16666666666666696,
+      "ci_low": -0.08333333333333304,
+      "ci_high": 0.41666666666666696,
+      "welch_t_p_fdr_bh": 0.3551526412486019,
+      "reject_fdr_bh": false,
+      "spearman_rho": NaN,
+      "spearman_p": NaN,
+      "value": NaN
+    },
+    {
+      "comparison": "authenticity_human_vs_model_other_grief",
+      "metric": "authenticity_mean",
+      "group_a": "human",
+      "group_b": "model",
+      "n_a": 6.0,
+      "n_b": 12.0,
+      "mean_a": 4.666666666666667,
+      "mean_b": 4.541666666666667,
+      "welch_t_p": 0.3551526412486019,
+      "mannwhitney_p": 0.3700277116622618,
+      "cohens_d": 0.48507125007266594,
+      "mean_diff": 0.125,
+      "ci_low": -0.08333333333333393,
+      "ci_high": 0.375,
+      "welch_t_p_fdr_bh": 0.3551526412486019,
+      "reject_fdr_bh": false,
+      "spearman_rho": NaN,
+      "spearman_p": NaN,
+      "value": NaN
+    },
+    {
+      "comparison": "detector_vs_authenticity",
+      "metric": "correlation",
+      "group_a": NaN,
+      "group_b": NaN,
+      "n_a": NaN,
+      "n_b": NaN,
+      "mean_a": NaN,
+      "mean_b": NaN,
+      "welch_t_p": NaN,
+      "mannwhitney_p": NaN,
+      "cohens_d": NaN,
+      "mean_diff": NaN,
+      "ci_low": NaN,
+      "ci_high": NaN,
+      "welch_t_p_fdr_bh": NaN,
+      "reject_fdr_bh": NaN,
+      "spearman_rho": -0.24857219411250395,
+      "spearman_p": 0.1437809438060699,
+      "value": NaN
+    },
+    {
+      "comparison": "mage_detector_auroc",
+      "metric": "auroc",
+      "group_a": NaN,
+      "group_b": NaN,
+      "n_a": NaN,
+      "n_b": NaN,
+      "mean_a": NaN,
+      "mean_b": NaN,
+      "welch_t_p": NaN,
+      "mannwhitney_p": NaN,
+      "cohens_d": NaN,
+      "mean_diff": NaN,
+      "ci_low": NaN,
+      "ci_high": NaN,
+      "welch_t_p_fdr_bh": NaN,
+      "reject_fdr_bh": NaN,
+      "spearman_rho": NaN,
+      "spearman_p": NaN,
+      "value": 0.826388888888889
+    }
+  ]
+}

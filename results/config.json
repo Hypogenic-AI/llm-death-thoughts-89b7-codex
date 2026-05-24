@@ -1,0 +1,51 @@
+{
+  "config": {
+    "seed": 42,
+    "openai_generation_model": "gpt-5",
+    "openai_judge_model": "gpt-5-mini",
+    "openai_brief_model": "gpt-5-mini",
+    "openrouter_generation_model": "anthropic/claude-sonnet-4.5",
+    "openrouter_judge_model": "anthropic/claude-haiku-4.5",
+    "max_human_texts": 12,
+    "generation_temperature": 0.9,
+    "judge_temperature": 0.1,
+    "brief_temperature": 0.2,
+    "detector_model": "yaful/MAGE",
+    "generation_word_target_tolerance": 18,
+    "gpu_batch_size": 32,
+    "cpu_batch_size": 8
+  },
+  "environment": {
+    "python": "3.12.8 (main, Dec 19 2024, 14:33:20) [Clang 18.1.8 ]",
+    "pandas": "3.0.3",
+    "numpy": "2.4.6",
+    "torch": "2.12.0+cu130",
+    "transformers": "5.9.0",
+    "device": "cuda:0",
+    "gpu_info": [
+      {
+        "index": 0,
+        "name": "NVIDIA RTX A6000",
+        "total_memory_gb": 47.4
+      },
+      {
+        "index": 1,
+        "name": "NVIDIA RTX A6000",
+        "total_memory_gb": 47.4
+      },
+      {
+        "index": 2,
+        "name": "NVIDIA RTX A6000",
+        "total_memory_gb": 47.4
+      },
+      {
+        "index": 3,
+        "name": "NVIDIA RTX A6000",
+        "total_memory_gb": 47.4
+      }
+    ],
+    "gpu_batch_size_used": 32,
+    "cpu_batch_size_used": null,
+    "timestamp_utc": "2026-05-24T22:49:06.483519+00:00"
+  }
+}

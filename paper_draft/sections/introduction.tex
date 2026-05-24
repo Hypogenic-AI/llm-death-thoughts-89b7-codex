@@ -1,0 +1,22 @@
+\section{Introduction}
+\label{sec:introduction}
+
+Death is the hardest version of a common complaint about language models. If authentic writing requires direct lived experience, then writing about death should expose a categorical limit: LLMs have not experienced death, so their words should be uniquely hollow. But the comparison case is less clean than this critique assumes. Human writers also regularly produce meaningful, persuasive writing about death without having been dead themselves. Our main question is therefore simple: {\bf is bereavement actually a special case where model writing becomes uniquely inauthentic, or does it pattern like ordinary human writing about inaccessible experiences?}
+
+This question matters beyond a philosophical parlor game. Claims about authenticity shape how people evaluate AI-mediated writing in education, journalism, memorialization, and clinical or support-adjacent settings. If lack of firsthand experience is treated as disqualifying in principle, then model writing about grief can be rejected before anyone examines how readers actually respond to it. That is too coarse a standard for a domain where human writing itself often depends on imagination, observation, and social knowledge rather than literal first-person experience.
+
+Prior work gives useful pieces of the puzzle, but not the test we need. Research on AI-assisted writing shows that people understand authenticity through process, self-expression, and value alignment, not just unaided authorship \citep{hwang2024authenticity}. Work on LLMs as models of human behavior shows that these systems can learn human-like traces without sharing human phenomenology \citep{binz2023cognitive,jiang2024real}. Detection papers show that machine text can remain statistically separable even when it is fluent \citep{li2024mage}. Bereavement-language research, meanwhile, shows that grief expression depends on concrete situational detail and linguistic style rather than negative sentiment alone \citep{brubaker2012grief}. What is missing is a direct interaction test: whether the human-model gap becomes larger specifically when the topic is death.
+
+We address that gap with a small but controlled pilot study. Starting from 12 grief passages from \aipsy \citep{keeman2026aipsy}, we derive scenario briefs, generate matched responses from \gptfive and \claudesonnet, blind the resulting 36-text pool, and evaluate it with two judge models plus the \mage detector. Our design isolates a specific empirical prediction from anti-LLM critiques: if death is uniquely disqualifying, then the human-model authenticity gap should widen in bereavement relative to other severe but nonterminal losses.
+
+It does not. Human texts score slightly higher on authenticity in both domains, but the gap is small in absolute terms: 4.92 versus 4.75 in bereavement, and 4.67 versus 4.54 in other grief. The interaction term is effectively zero ($+0.042$, $p=0.835$). At the same time, the detector still separates generated from human text with AUROC $=0.826$, which means judged authenticity and detector separability come apart in exactly the way the critique often ignores.
+
+In summary, our main contributions are:
+\begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+    \item We operationalize the claim that ``death is different'' as a source-by-domain interaction test on authenticity judgments.
+    \item We conduct a matched pilot comparison between 12 human grief passages and 24 frontier-model generations from \gptfive and \claudesonnet.
+    \item We show that reader-facing authenticity and detector-based machine-likeness diverge: detector AUROC remains high even when judged authenticity gaps are small.
+    \item We provide a compact stylistic analysis showing mild regularization in model outputs without a corresponding collapse in judged authenticity.
+\end{itemize}
+
+The rest of the paper is organized as follows. \Secref{sec:related-work} situates the study in prior work on authenticity, behavior alignment, and detection. \Secref{sec:methodology} describes the corpus construction and evaluation pipeline. \Secref{sec:results} presents the main findings, and \Secref{sec:discussion} discusses their interpretation, limitations, and implications.

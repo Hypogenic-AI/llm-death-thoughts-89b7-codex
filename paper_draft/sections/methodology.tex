@@ -1,0 +1,27 @@
+\section{Methodology}
+\label{sec:methodology}
+
+\para{Study design.}
+We compare human-authored and model-generated grief passages under a simple factorial design. The two independent variables are source (\textsc{Human} versus \textsc{Model}) and domain (\textsc{Bereavement} versus \textsc{Other Grief}). The primary dependent variable is mean authenticity rating. Secondary outcomes are emotional plausibility, specificity, judge machine-guess rate, detector machine probability, and several descriptive style features.
+
+\para{Human source texts.}
+Our human comparator set comes from the local copy of \aipsy, a keyword-free affect dataset of short clinical-style vignettes \citep{keeman2026aipsy}. We select 12 grief passages: 6 bereavement texts, 3 career-loss grief texts, and 3 relationship-loss grief texts. Following the experimental question, we collapse the latter two categories into a single \textsc{Other Grief} group. This yields a small but balanced test of whether death amplifies the human-model gap.
+
+\para{Matched generation pipeline.}
+For each human passage, we first use \gptjudge to produce a short scenario brief that preserves the situation while avoiding phrase copying from the original text. We then generate one matched passage with \gptfive and one with \claudesonnet, for 24 generated texts total. This gives a 36-text evaluation pool with one human text and two model texts per scenario. All model outputs are generated with real API calls and cached incrementally in \texttt{results/} to support resumption.
+
+\para{Blinded evaluation.}
+We blind the pooled texts and score each one with two independent judge models: \gptjudge and \claudejudge. Judges rate authenticity, emotional plausibility, and specificity/concreteness on a 1--5 scale, and they also guess whether the source is human or machine. We average the scalar scores across judges to produce text-level outcome variables.
+
+\para{Detector and style analysis.}
+To measure distributional separability, we score every text with the pretrained \mage Longformer detector \citep{li2024mage}. We record machine probability, human probability, AUROC, and threshold-0.5 accuracy. We also compute lightweight style features: word count, average sentence length, type-token ratio, first-person rate, and object-word rate. These features are descriptive rather than causal; they help characterize residual differences that may survive even when authenticity ratings saturate.
+
+\para{Statistical plan.}
+We compare human and model texts within each domain using Welch's $t$-test and Mann-Whitney $U$ as a robustness check. We report bootstrap 95\% confidence intervals for mean differences. To test the core hypothesis that death enlarges the authenticity gap, we fit an OLS interaction model:
+\[
+\text{authenticity} \sim \text{source} * \text{domain}.
+\]
+We also compute a Spearman correlation between detector machine probability and authenticity, and apply Benjamini-Hochberg correction across the two primary source contrasts.
+
+\para{Implementation details.}
+The pipeline runs under Python 3.12.8 with torch 2.12.0+cu130, transformers 5.9.0, pandas 3.0.3, scipy 1.17.1, and statsmodels 0.14.6. The environment exposes four NVIDIA RTX A6000 GPUs with 47.4GB each; detector inference uses \texttt{cuda:0} with batch size 32. The generator models are \gptfive and \claudesonnet. The judge models are \gptjudge and \claudejudge.

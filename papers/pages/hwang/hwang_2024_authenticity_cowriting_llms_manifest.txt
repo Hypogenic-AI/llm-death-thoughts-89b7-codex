@@ -1,0 +1,18 @@
+PDF: papers/must_read/hwang_2024_authenticity_cowriting_llms.pdf
+Total pages: 38
+Pages per chunk: 3
+
+Chunks:
+  hwang_2024_authenticity_cowriting_llms_chunk_001.pdf: pages 1-3
+  hwang_2024_authenticity_cowriting_llms_chunk_002.pdf: pages 4-6
+  hwang_2024_authenticity_cowriting_llms_chunk_003.pdf: pages 7-9
+  hwang_2024_authenticity_cowriting_llms_chunk_004.pdf: pages 10-12
+  hwang_2024_authenticity_cowriting_llms_chunk_005.pdf: pages 13-15
+  hwang_2024_authenticity_cowriting_llms_chunk_006.pdf: pages 16-18
+  hwang_2024_authenticity_cowriting_llms_chunk_007.pdf: pages 19-21
+  hwang_2024_authenticity_cowriting_llms_chunk_008.pdf: pages 22-24
+  hwang_2024_authenticity_cowriting_llms_chunk_009.pdf: pages 25-27
+  hwang_2024_authenticity_cowriting_llms_chunk_010.pdf: pages 28-30
+  hwang_2024_authenticity_cowriting_llms_chunk_011.pdf: pages 31-33
+  hwang_2024_authenticity_cowriting_llms_chunk_012.pdf: pages 34-36
+  hwang_2024_authenticity_cowriting_llms_chunk_013.pdf: pages 37-38

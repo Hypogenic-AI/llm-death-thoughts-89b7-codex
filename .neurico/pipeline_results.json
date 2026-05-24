@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "stages": {
+    "resource_finder": {
+      "success": true,
+      "completion_marker": "/workspaces/llm-death-thoughts-89b7-codex/.resource_finder_complete",
+      "outputs": {
+        "literature_review": "/workspaces/llm-death-thoughts-89b7-codex/literature_review.md",
+        "resources_catalog": "/workspaces/llm-death-thoughts-89b7-codex/resources.md",
+        "papers_dir": "/workspaces/llm-death-thoughts-89b7-codex/papers",
+        "datasets_dir": "/workspaces/llm-death-thoughts-89b7-codex/datasets",
+        "code_dir": "/workspaces/llm-death-thoughts-89b7-codex/code"
+      },
+      "log_file": "/workspaces/llm-death-thoughts-89b7-codex/logs/resource_finder_codex.log",
+      "transcript_file": "/workspaces/llm-death-thoughts-89b7-codex/logs/resource_finder_codex_transcript.jsonl",
+      "elapsed_time": 457.44596123695374
+    },
+    "experiment_runner": {
+      "success": true,
+      "return_code": 0,
+      "elapsed_time": 2019.0746970176697,
+      "log_file": "/workspaces/llm-death-thoughts-89b7-codex/logs/execution_codex.log",
+      "transcript_file": "/workspaces/llm-death-thoughts-89b7-codex/logs/execution_codex_transcript.jsonl"
+    }
+  },
+  "work_dir": "/workspaces/llm-death-thoughts-89b7-codex"
+}

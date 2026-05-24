@@ -1,0 +1,15 @@
+{
+  "authenticity_regression_r2": 0.19690265486725678,
+  "authenticity_regression_params": {
+    "Intercept": 4.916666666666668,
+    "C(source_binary)[T.model]": -0.16666666666666502,
+    "C(domain_group)[T.other_grief]": -0.25,
+    "C(source_binary)[T.model]:C(domain_group)[T.other_grief]": 0.04166666666666641
+  },
+  "authenticity_regression_pvalues": {
+    "Intercept": 7.423054143007582e-30,
+    "C(source_binary)[T.model]": 0.2437195860159621,
+    "C(domain_group)[T.other_grief]": 0.13271704473117812,
+    "C(source_binary)[T.model]:C(domain_group)[T.other_grief]": 0.8350411732516414
+  }
+}

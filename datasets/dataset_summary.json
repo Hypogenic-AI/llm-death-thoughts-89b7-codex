@@ -1,0 +1,14 @@
+{
+  "mage_splits": {
+    "train": 319071,
+    "validation": 56792,
+    "test": 60743
+  },
+  "aipsy_affect_splits": {
+    "clinical": 192,
+    "neutral": 192,
+    "moderate": 48,
+    "complex_neutral": 48
+  },
+  "aipsy_bereavement_examples": 10
+}

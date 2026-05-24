@@ -1,0 +1,799 @@
+You are an academic paper writer. Generate a complete NEURIPS style paper
+based on the experiment results provided.
+
+════════════════════════════════════════════════════════════════════════════════
+                         IMPORTANT: BEFORE YOU START
+════════════════════════════════════════════════════════════════════════════════
+
+Before writing any content, you MUST complete these steps:
+
+1. READ THE SKILL: Review the paper-writer skill at .codex/skills/paper-writer/SKILL.md
+2. READ THE STYLE GUIDE: Study templates/paper_writing/lab_style_guide.md carefully
+3. REVIEW EXAMPLES: Browse paper_examples/ for formatting and language patterns:
+   - Look at sections/1.introduction.tex for language style
+   - Look at tables/*.tex for table formatting
+   - Look at commands/*.tex for macro usage
+4. VERIFY COMMAND TEMPLATES: Command templates (math.tex, general.tex, macros.tex) are pre-copied to paper_draft/commands/
+
+CRITICAL: Reference example papers for FORMATTING and LANGUAGE STYLE only.
+Do NOT copy content, phrasing, or narrative structure from the example papers.
+The examples are in a different research domain - focus only on presentation style.
+
+════════════════════════════════════════════════════════════════════════════════
+                            EXPERIMENT REPORT
+════════════════════════════════════════════════════════════════════════════════
+
+# You are like LMs when you think of death
+
+## 1. Executive Summary
+This project tested whether LLM writing about death should be treated as uniquely inauthentic because models have not "experienced" death, or whether it behaves like human writing about inaccessible experiences. Using 12 human grief passages from the local AIPSY Affect dataset and 24 matched generations from `gpt-5` and `claude-sonnet-4.5`, I compared blinded authenticity judgments, machine-detection scores, and simple stylistic features.
+
+The main finding is that the human-model authenticity gap was small in both domains and was not larger for bereavement than for other grief. In bereavement, mean authenticity was `4.92/5` for human texts vs `4.75/5` for model texts; in other grief it was `4.67/5` vs `4.54/5`. Neither contrast was statistically significant, and the interaction between source and domain was near zero. At the same time, the MAGE detector still separated generated from human text with `AUROC = 0.826`, showing that detector separability and judged authenticity are not the same thing.
+
+Practically, this supports a narrower but important claim: in this pilot setting, death did not function as a uniquely disqualifying topic for LLM writing. The models still left detectable distributional traces, but readers-as-judges did not treat those traces as evidence of inauthenticity.
+
+## 2. Research Question & Motivation
+### Research Question
+When writing about death and grief without firsthand experience of being dead, are LLM-generated texts judged and distributed more like human-authored grief writing than anti-LLM critiques assume, and is the human-model gap no larger for bereavement than for other severe but nonterminal losses?
+
+### Why This Matters
+Many arguments about AI writing assume that meaningful language must be anchored in direct lived reference. Death is a useful stress case because humans also routinely write about death without literally having undergone it. If LLM writing is judged similarly to human writing in that setting, then a common critique of LLM meaning overstates the role of firsthand experience in ordinary writing practice.
+
+### Literature Review Summary
+- Hwang et al. argue that authenticity in AI-assisted writing depends on process, self-expression, and value alignment, not only on unaided authorship.
+- Binz and Schulz, and Jiang et al., show that LLMs can model human traces and behavior despite lacking human phenomenology.
+- MAGE and related detection work show that machine text can remain separable even when it appears fluent.
+- Bereavement-language work shows that concrete situational details, not just negative sentiment, matter for grief writing.
+
+The literature therefore motivates a direct test of whether death-writing creates a uniquely large authenticity gap for models.
+
+## 3. Methodology
+### Experimental Setup
+- Human comparator data: 12 local grief passages from `datasets/aipsy_affect/`
+  - 6 bereavement texts
+  - 3 career-loss grief texts
+  - 3 relationship-loss grief texts
+- Generated texts: one passage per scenario from `gpt-5` and one from `anthropic/claude-sonnet-4.5`, for 24 generated texts total
+- Judges:
+  - `gpt-5-mini`
+  - `anthropic/claude-haiku-4.5`
+- Detector:
+  - `yaful/MAGE` Longformer detector
+
+### Protocol
+1. Load the 12 human passages and split them into `bereavement` and `other_grief`.
+2. Use `gpt-5-mini` to convert each human passage into a short scenario brief while avoiding phrase copying.
+3. Generate one matched passage from `gpt-5` and one from `claude-sonnet-4.5`.
+4. Blind the full pool of 36 texts and have both judge models rate each text on:
+   - authenticity
+   - emotional plausibility
+   - specificity / concreteness
+   - likely human vs machine source
+5. Score all texts with the MAGE detector.
+6. Compute style features and run statistical comparisons.
+
+### Environment and Compute
+- Python: `3.12.8`
+- Key libraries: `torch 2.12.0+cu130`, `transformers 5.9.0`, `pandas 3.0.3`, `scipy 1.17.1`, `statsmodels 0.14.6`
+- GPU detected: 4 x `NVIDIA RTX A6000` with `47.4 GB` each
+- GPU used: `cuda:0`
+- Detector batch size: `32`
+
+This project used real API calls throughout the model-behavior parts of the study. Outputs were cached incrementally in `results/` so reruns could resume safely.
+
+### Metrics
+- Mean authenticity rating
+- Mean emotional plausibility rating
+- Mean specificity rating
+- Judge machine-guess rate
+- MAGE detector machine probability and AUROC
+- Spearman correlation between detector machine probability and authenticity
+- Descriptive style features: word count, sentence length, type-token ratio, first-person rate, object-word rate
+
+### Statistical Plan
+- Welch t-test and Mann-Whitney U for human vs model contrasts
+- Bootstrap 95% confidence intervals for mean differences
+- OLS interaction model: `authenticity ~ source * domain_group`
+- Spearman correlation for detector score vs authenticity
+- FDR correction across the two primary source contrasts
+
+## 4. Results
+### Core Comparison
+
+| Domain | Human Mean Authenticity | Model Mean Authenticity | Mean Difference | 95% CI | Welch p |
+|---|---:|---:|---:|---:|---:|
+| Bereavement | 4.92 | 4.75 | 0.17 | [-0.08, 0.42] | 0.213 |
+| Other grief | 4.67 | 4.54 | 0.13 | [-0.08, 0.38] | 0.355 |
+
+Interpretation: the human passages scored slightly higher, but the gap was small in absolute terms and statistically inconclusive in both domains.
+
+### Interaction Test
+- OLS interaction term `source x other_grief`: `+0.042`
+- Interaction p-value: `0.835`
+- Model `R^2`: `0.197`
+
+Interpretation: bereavement did not enlarge the human-model authenticity gap.
+
+### Judge Behavior
+- Both judge models strongly favored high authenticity ratings overall.
+- Mean authenticity by provider:
+  - Human: `4.792`
+  - `gpt-5`: `4.708`
+  - `claude-sonnet-4.5`: `4.583`
+- All 72 judge source guesses labeled the passage as human or human-written.
+
+Interpretation: under this rubric, judges did not operationally distinguish source at all, even when detector scores did.
+
+### Detector Behavior
+- MAGE detector AUROC: `0.826`
+- Threshold-0.5 accuracy: `0.750`
+- Confusion matrix at threshold 0.5:
+  - Human predicted human: `4`
+  - Human predicted machine: `8`
+  - Model predicted human: `1`
+  - Model predicted machine: `23`
+
+Mean machine probability by group:
+- Bereavement human: `0.665`
+- Bereavement model: `0.998`
+- Other-grief human: `0.596`
+- Other-grief model: `0.922`
+
+Interpretation: the detector still separated generated text reasonably well overall, but it overcalled "machine" on many human grief passages, especially in this domain-shifted setting.
+
+### Detector vs Authenticity
+- Spearman correlation between machine probability and authenticity: `-0.249`
+- p-value: `0.144`
+
+Interpretation: more machine-like detector behavior weakly tracked lower authenticity, but the relationship was small and not statistically reliable.
+
+### Style Features
+Mean values by provider:
+
+| Provider | Word Count | Type-Token Ratio | Object-Word Rate |
+|---|---:|---:|---:|
+| Human | 93.1 | 0.686 | 0.051 |
+| `gpt-5` | 102.2 | 0.774 | 0.045 |
+| `claude-sonnet-4.5` | 108.4 | 0.782 | 0.041 |
+
+Interpretation: the model outputs were slightly longer, more lexically varied, and a bit less object-dense than the human passages, which is consistent with mild stylistic smoothing rather than a collapse in authenticity.
+
+### Output Locations
+- Main pooled data: `results/text_pool.csv`
+- Group summaries: `results/group_summary.csv`
+- Statistical tests: `results/stat_tests.csv`
+- Detector details: `results/detector_scores.jsonl`
+- Figures:
+  - `figures/authenticity_by_domain_source.png`
+  - `figures/detector_vs_authenticity.png`
+  - `figures/style_features_by_source.png`
+
+## 5. Analysis & Discussion
+The main empirical result supports the central analogy more than it hurts it. Human grief passages scored slightly above model passages, but the gap was small and did not increase for bereavement. If death were a uniquely disqualifying topic for LLM writing because the model lacks direct experience, we would expect the bereavement gap to widen relative to other grief. It did not.
+
+At the same time, the detector result matters. Generated texts were still more machine-like in distributional terms, with very high detector probabilities and a solid AUROC. That means "authentic enough to readers" and "indistinguishable to detectors" are separate questions. This distinction is exactly what the original hypothesis needed: critics often move too quickly from detectable artifact to philosophical emptiness.
+
+The qualitative pattern suggests two complementary truths:
+- The generated texts were generally credible, emotionally plausible, and concrete enough to satisfy blinded judges.
+- They still carried stylistic regularities that a trained detector could exploit, even while also overfiring on several human grief texts.
+
+The provider split is also informative. `gpt-5` came slightly closer to human average authenticity than `claude-sonnet-4.5` in this setup, though both remained high-scoring. That difference is small enough that it should not be overread.
+
+## 6. Limitations
+- Sample size was small: 12 human texts and 24 generated texts.
+- The human corpus came from `AIPSY Affect`, which is grief-relevant but vignette-like and not a large naturalistic memorial corpus.
+- Judge models were themselves LLMs, not human readers.
+- The rating rubric produced a ceiling effect: almost everything scored between 4 and 5.
+- Cost tracking was not instrumented in the pipeline, so token-level budget estimates are unavailable.
+- The MAGE detector is out-of-domain for this exact task and showed high false-positive rates on human grief text.
+
+These limitations mean the project is best treated as a pilot study, not a final answer to the philosophy of reference or authenticity.
+
+## 7. Conclusions & Next Steps
+Within this automated pilot study, death was not a uniquely disqualifying topic for LLM writing. Frontier-model passages about bereavement were judged nearly as authentic as human passages, and the small human-model gap was no larger than the gap in other grief domains. This supports the narrower claim that lack of firsthand experience does not, by itself, make LLM death-writing categorically unlike human writing.
+
+The stronger opposing claim still has some empirical basis at the detector level: generated texts remained mechanically distinguishable. But detector separability did not translate into strong authenticity penalties from judges, which suggests that philosophical and evaluative debates should not treat those two notions as interchangeable.
+
+Recommended follow-up work:
+- Replace LLM judges with blinded human raters.
+- Expand to a larger, more naturalistic bereavement corpus.
+- Use paired prompts with explicitly human writers to compare process-authenticity against text-authenticity.
+- Add calibrated judge rubrics that avoid ceiling effects.
+
+## References
+- Hwang et al. "It was 80% me, 20% AI": Seeking Authenticity in Co-Writing with Large Language Models.
+- Heim et al. Using Large Language Models to Generate Authentic Multi-agent Knowledge Work Datasets.
+- Binz and Schulz. Turning Large Language Models into Cognitive Models.
+- Jiang et al. The Real, the Better.
+- Li et al. MAGE: Machine-generated Text Detection in the Wild.
+- Brubaker et al. Grief-Stricken in a Crowd.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                            RESEARCH PLAN
+════════════════════════════════════════════════════════════════════════════════
+
+# Research Plan: You are like LMs when you think of death
+
+## Motivation & Novelty Assessment
+
+### Why This Research Matters
+Debates about whether LLM writing is "real" often assume that meaningful writing must be grounded in direct lived reference. That assumption matters because it shapes policy, pedagogy, authorship norms, and how people evaluate AI-mediated expression in sensitive domains such as grief, memorialization, and existential reflection.
+
+### Gap in Existing Work
+The literature review shows adjacent but incomplete evidence. Authenticity work studies co-writing and perceived voice; human-behavior alignment work shows that LLMs can model human traces; detection work measures separability of human and model text; bereavement-language work studies grief markers in human discourse. What is missing is a direct test of whether death-related writing is a special case where lack of firsthand experience should disqualify LLM writing, or whether human and model writing are judged similarly once both are writing about experiences they have not literally undergone.
+
+### Our Novel Contribution
+This project tests a sharper claim than generic "AI authenticity" debates. We compare human-authored grief texts and real frontier-model generations under matched scenarios, then ask whether the human-model gap is larger for bereavement than for other severe losses. If death is not uniquely penalizing for model writing, that supports the user's core analogy: humans also routinely produce meaningful writing about unexperienced phenomena.
+
+### Experiment Justification
+- Experiment 1: Build a matched corpus of grief scenarios and frontier-model generations.
+  Needed because the hypothesis concerns actual writing outputs, not abstract claims.
+- Experiment 2: Run blinded authenticity judgments with real LLM judges.
+  Needed because authenticity is partly perceptual in the literature and cannot be reduced to raw detector scores.
+- Experiment 3: Run a machine-text detector and compare its outputs to judge ratings.
+  Needed because human/LLM discourse often conflates "detectable as machine-like" with "inauthentic."
+- Experiment 4: Compute lightweight stylistic features and qualitative error analysis.
+  Needed to see which textual cues drive any remaining gap.
+
+## Research Question
+When writing about death and grief without firsthand experience of being dead, are LLM-generated texts judged and distributed more like human-authored grief writing than anti-LLM critiques assume, and is the human-model gap no larger for bereavement than for other severe but nonterminal losses?
+
+## Background and Motivation
+Prior work suggests that authenticity is socially and rhetorically constructed rather than reducible to unaided firsthand reporting. Hwang et al. frame authenticity around self-expression, source, and value alignment. Binz and Schulz, plus Jiang et al., show that LLMs can align to human behavior traces despite lacking human phenomenology. Detection work such as MAGE and Chakraborty et al. shows that human and model text remain separable in many settings, but this does not settle whether model writing about inaccessible experiences is uniquely defective. The present study addresses that gap directly in a death-writing setting.
+
+## Hypothesis Decomposition
+- H1: Frontier-model grief texts will receive lower authenticity ratings than human grief texts overall, but the gap will be modest rather than categorical.
+- H2: The human-model authenticity gap will not be larger in bereavement than in other grief domains such as abandonment or career-loss grief.
+- H3: Detector-based machine-likeness and judged authenticity will be only moderately correlated, showing that "machine-like" and "inauthentic" are not equivalent.
+- H4: LLM grief texts will match human texts on several surface cues linked to authenticity in grief discourse, especially concreteness and situational specificity, but will still show some stylistic regularization.
+
+Independent variables:
+- Source: human, GPT-5, second frontier model via OpenRouter
+- Domain: bereavement, other grief
+- Judge: GPT-5 judge, second judge model via OpenRouter
+
+Dependent variables:
+- Authenticity rating
+- Emotional plausibility rating
+- Specificity / concreteness rating
+- Judge guess of human vs machine source
+- MAGE detector human-probability / machine-probability
+- Lightweight stylistic features
+
+Alternative explanations:
+- Judges may simply reward polished prose.
+- Small bereavement corpus may limit power.
+- AIPSY texts may be vignette-like rather than naturalistic grief testimony.
+- Detector confidence may reflect training-domain artifacts rather than authenticity.
+
+## Proposed Methodology
+
+### Approach
+Use the local `AIPSY Affect` dataset as the human comparator set and scenario seed source, because it contains explicit bereavement and grief texts. Build a small but tightly controlled matched corpus: 18 human texts across three grief domains, then use a real frontier model to derive neutral scenario prompts from those texts and generate matched responses from two frontier models. Evaluate the full blinded pool with two independent LLM judges, a pretrained MAGE detector, and simple stylistic features.
+
+This approach is preferred over a pure detector benchmark because the research question is normative and rhetorical, not just classificatory. It is preferred over a human-subject study because the session must be fully automated and completed end-to-end in this environment.
+
+### Experimental Steps
+1. Load the local datasets and select 18 human grief texts.
+   Rationale: keeps the study anchored in locally available data and balanced by domain.
+2. Split domains into `bereavement` and `other_grief`.
+   Rationale: directly operationalizes whether death is a special case.
+3. Use a frontier model to convert each human text into a short scenario brief with target length/style constraints.
+   Rationale: gives matched prompts without copying human wording verbatim into generation prompts.
+4. Generate one response per scenario from GPT-5 and one second-model response via OpenRouter.
+   Rationale: tests whether the effect generalizes beyond one model family.
+5. Blind the pooled texts and score them with two judge models on authenticity, plausibility, specificity, and human/machine guess.
+   Rationale: follows the literature's emphasis on perceived authenticity.
+6. Score the same texts with the MAGE detector and extract stylistic features.
+   Rationale: separates detector behavior from authenticity judgments.
+7. Run statistical comparisons and qualitative error analysis.
+   Rationale: tests the hypothesis and identifies where the analogy breaks down.
+
+### Baselines
+- Human-authored AIPSY grief texts
+- Source comparison between GPT-5 and the second frontier model
+- MAGE detector as a machine-likeness baseline
+- Simple stylistic features as non-neural descriptive baselines
+
+### Evaluation Metrics
+- Mean authenticity rating on a 1-5 scale
+- Mean emotional plausibility rating on a 1-5 scale
+- Mean specificity/concreteness rating on a 1-5 scale
+- Judge human-guess rate
+- Detector machine probability and AUROC for human vs generated text
+- Correlation between detector scores and authenticity ratings
+- Descriptive stylistic features: length, sentence length, type-token ratio, first-person pronoun rate, lexical concreteness proxy via object-word counts
+
+### Statistical Analysis Plan
+- Alpha: 0.05, two-sided
+- Primary comparison: mean authenticity gap between human and generated texts within `bereavement` and `other_grief`
+- Tests:
+  - Welch t-test and Mann-Whitney U for robustness
+  - Bootstrap 95% confidence intervals for mean differences
+  - Two-way OLS / ANOVA style analysis on authenticity with factors `source` and `domain`
+  - Spearman correlation between detector score and authenticity
+  - Fisher exact test on judge human/machine guesses where appropriate
+- Multiple comparisons:
+  - Benjamini-Hochberg correction across secondary outcomes
+
+## Expected Outcomes
+Results would support the hypothesis if:
+- LLM bereavement texts are often judged as emotionally plausible and moderately authentic.
+- The authenticity gap between human and model text is not larger for bereavement than for other grief.
+- Detector scores and authenticity judgments diverge meaningfully.
+
+Results would weaken the hypothesis if:
+- Bereavement amplifies the human-model gap substantially relative to other grief.
+- Both judges and detector cleanly separate all LLM death-writing from human texts.
+- LLM texts systematically lack the concrete situational detail present in human comparators.
+
+## Timeline and Milestones
+1. Planning and design finalization: complete immediately in `planning.md`
+2. Environment and dependency setup: 10-20 minutes
+3. Pipeline implementation: 45-75 minutes
+4. API generation and judging runs: 20-40 minutes
+5. Analysis and figures: 20-30 minutes
+6. Documentation and validation: 20-30 minutes
+
+## Potential Challenges
+- API model availability may differ across providers.
+  Mitigation: use OpenAI for the primary model and query OpenRouter for an available second model.
+- The human corpus is small.
+  Mitigation: use balanced sampling, bootstrap intervals, and cautious claims.
+- MAGE detector download or inference may be slow.
+  Mitigation: use GPU inference and cache all scores.
+- AIPSY may not represent naturalistic memorial discourse.
+  Mitigation: state this explicitly and treat conclusions as a targeted pilot study.
+
+## Success Criteria
+- A reproducible pipeline exists under `src/` and outputs are saved in `results/`.
+- The study runs on real frontier-model API calls, not simulated agents.
+- `REPORT.md` contains actual quantitative results, figures, and limitations.
+- The final interpretation directly answers whether death is a uniquely disqualifying topic for LLM writing under the tested conditions.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          LITERATURE REVIEW
+════════════════════════════════════════════════════════════════════════════════
+
+# Literature Review: You are like LMs when you think of death
+
+## Review Scope
+
+### Research Question
+When large language models write about death or grief without lived experience, should that writing be treated as analogous to human writing about unexperienced phenomena, especially where humans also routinely write authentically about events they have not personally undergone?
+
+### Inclusion Criteria
+- Papers on authenticity, authorship, or voice in AI-assisted writing
+- Papers on LLMs as models of human behavior or cognition
+- Papers or datasets for human-vs-LLM text comparison
+- Papers on linguistic analysis of bereavement, grief, or distress writing
+
+### Exclusion Criteria
+- Purely technical LLM papers without relevance to human expression or authorship
+- Medical grief papers without textual/linguistic data
+- Detection resources with no accessible paper, dataset, or code
+
+### Time Frame
+- Core AI literature: 2023-2026
+- Background bereavement language work: older foundational studies included when directly relevant
+
+### Sources
+- arXiv
+- ACL Anthology
+- OpenAlex
+- Hugging Face datasets
+- GitHub repositories linked from papers
+
+## Search Log
+
+| Date | Query | Source | Results | Notes |
+|------|-------|--------|---------|-------|
+| 2026-05-24 | `large language models authenticity writing experience` | OpenAlex | mixed | surfaced the Hwang paper |
+| 2026-05-24 | `all:"large language models" AND all:authenticity` | arXiv API | focused | surfaced Hwang, Heim et al., authorship work |
+| 2026-05-24 | `all:"large language models" AND all:"human behavior"` | arXiv API | focused | surfaced Binz and RLHB-related work |
+| 2026-05-24 | `all:"machine-generated text detection"` | arXiv API | broad | surfaced benchmark and detector papers |
+| 2026-05-24 | `grief bereavement text dataset social media` | OpenAlex / web | sparse | led to Brubaker et al. as the best accessible language paper |
+
+## Screening Results
+
+| Paper | Title Screen | Abstract Screen | Full-Text | Notes |
+|------|------|------|------|------|
+| Hwang et al. 2024 | Include | Include | Include | Most direct authenticity paper |
+| Heim et al. 2024 | Include | Include | Include | Helpful for operationalizing "authentic" synthetic text |
+| Binz and Schulz 2023 | Include | Include | Include | Strong analogy to human behavior modeling |
+| Jiang et al. 2024 | Include | Include | Include | Human-behavior alignment method |
+| Chakraborty et al. 2023 | Include | Include | Include | Detection theory and limits |
+| Li et al. 2024 | Include | Include | Include | Benchmark and dataset for human/LLM discrimination |
+| Brubaker et al. 2012 | Include | Include | Include | Death/bereavement writing reference |
+
+## Research Area Overview
+
+The literature splits into three useful strands. First, authenticity-in-writing work shows that people evaluate authenticity through process, identity, and audience relationship rather than only through factual lived experience. Second, cognitive-modeling and behavior-alignment work shows that LLMs can approximate human behavior patterns when trained or aligned against human traces. Third, text-detection and bereavement-language work gives operational tools for testing whether model writing about death is statistically or perceptually separable from human writing.
+
+This means the current evidence does not directly prove the hypothesis, but it does support a credible experiment design: compare human-authored death-related writing, human-authored writing about other unexperienced phenomena, and LLM-authored writing under matched prompts and evaluate them on authenticity judgments, stylistic markers, and detector behavior.
+
+## Key Papers
+
+### Hwang et al. 2024/2025: Seeking Authenticity in Co-Writing with LLMs
+- Authors: Angel Hsing-Chi Hwang et al.
+- Source: arXiv / CSCW 2025
+- Key Contribution: Shows that writers define authenticity as tied to source, authentic self, content authenticity, and value alignment; authenticity is not reducible to whether all words were unaided.
+- Methodology: Semi-structured interview study with 19 professional writers plus online survey with 30 avid readers; compared personalized vs non-personalized AI writing support.
+- Datasets Used: Original study materials and writer-produced passages; no reusable benchmark dataset released in the paper PDF.
+- Results:
+  - Most writers preferred personalized AI support.
+  - Personalization helped preserve voice under time pressure.
+  - Writers centered authenticity in the process of expression and in self-construction.
+  - Reader reactions were less uniformly hostile than writers expected.
+- Code Available: Not identified in accessible sources.
+- Relevance to Our Research: This is the strongest conceptual anchor for arguing that authenticity can survive mediation by tools and that lived process matters as much as direct experience.
+
+### Heim et al. 2024: Using LLMs to Generate Authentic Multi-agent Knowledge Work Datasets
+- Authors: Desiree Heim et al.
+- Source: arXiv
+- Key Contribution: Introduces a configurable multi-agent generator for synthetic knowledge-work documents plus a knowledge graph of the simulated context.
+- Methodology: Multi-agent simulation of workplace tasks and documents, followed by human realism judgments.
+- Datasets Used: Synthetic knowledge-work traces generated by the proposed system.
+- Results:
+  - Human raters marked 53% of generated documents and 74% of real documents as realistic.
+  - The gap shows synthetic texts can appear plausible but still fall short of real-world authenticity.
+- Code Available: Not located from paper metadata.
+- Relevance to Our Research: Useful contrast case. It operationalizes authenticity as realism and highlights that plausibility alone is weaker than the richer notion of authenticity raised by the main hypothesis.
+
+### Binz and Schulz 2023: Turning Large Language Models into Cognitive Models
+- Authors: Marcel Binz, Eric Schulz
+- Source: arXiv
+- Key Contribution: Demonstrates that LLMs fine-tuned on psychological experiment data can outperform traditional cognitive models in predicting human behavior.
+- Methodology: Fine-tuned LLaMA-derived models on behavioral experiment traces; evaluated on decision-making tasks and unseen-task generalization.
+- Datasets Used: Psychological experiment datasets including `choices13k` and the horizon task.
+- Results:
+  - Fine-tuning moved model behavior substantially closer to human choice curves and regret levels.
+  - Learned representations could model behavior at the individual-subject level.
+  - Multi-task tuning improved transfer to unseen tasks.
+- Code Available: Yes, see `code/Llama-3.1-Centaur-70B/` for the later follow-on repository.
+- Relevance to Our Research: Strong evidence for the analogy that LLMs can become models of human-like behavior even when they do not share human phenomenology.
+
+### Jiang et al. 2024: The Real, the Better
+- Authors: Guanying Jiang et al.
+- Source: arXiv
+- Key Contribution: Proposes Reinforcement Learning with Human Behavior (RLHB), aligning LLMs directly to observed online behavior.
+- Methodology: Generator-discriminator framework using triplets of query, response, and human behavior from online environments.
+- Datasets Used: Real online behavior traces collected in a search setting.
+- Results: Human and automatic evaluation both favored the behavior-aligned method over baselines.
+- Code Available: Not identified from accessible sources.
+- Relevance to Our Research: Supports the claim that human behavioral traces can be learned into LLM output distributions without requiring firsthand experience.
+
+### Chakraborty et al. 2023: On the Possibilities of AI-Generated Text Detection
+- Authors: Souradip Chakraborty et al.
+- Source: arXiv
+- Key Contribution: Gives a theoretical account of when human-vs-AI text detection is possible and how sample complexity grows as text distributions converge.
+- Methodology: Information-theoretic analysis plus empirical tests across XSum, SQuAD, IMDb, and FakeNews.
+- Datasets Used: XSum, SQuAD, IMDb, Kaggle FakeNews.
+- Results:
+  - Detection remains feasible unless human and machine distributions become indistinguishable over their support.
+  - Longer samples substantially improve detection power.
+- Code Available: Not identified from accessible sources.
+- Relevance to Our Research: Important for experiment design because apparent "authenticity" may simply reflect detector weakness at short lengths; sample length must be controlled.
+
+### Li et al. 2024: MAGE
+- Authors: Yafu Li et al.
+- Source: ACL 2024
+- Key Contribution: Builds a large, cross-domain, cross-model machine-generated text benchmark with increasingly difficult OOD settings.
+- Methodology: Aggregates human texts from 10 datasets and machine texts from 27 LLMs; evaluates multiple detectors.
+- Datasets Used: 447,674 total examples across diverse writing tasks and models.
+- Results:
+  - Distinguishing human from machine text becomes much harder under OOD conditions.
+  - The top detector still identified 86.54% of out-of-domain texts from a new LLM.
+- Code Available: Yes, `code/MAGE/`
+- Relevance to Our Research: Best currently available benchmark for operational human-vs-LLM text discrimination and for stress-testing claims of indistinguishability.
+
+### Brubaker et al. 2012: Grief-Stricken in a Crowd
+- Authors: Jed R. Brubaker et al.
+- Source: ICWSM
+- Key Contribution: Provides a linguistic analysis of bereavement-related distress in social-media memorial writing.
+- Methodology: Manual coding of emotionally distressed content plus linguistic feature analysis on post-mortem social media comments.
+- Datasets Used: Messages posted to deceased MySpace users' profiles.
+- Results:
+  - Distress is signaled by more than sentiment words alone; linguistic style contributes discriminative information.
+  - The work motivates automatic detection of bereavement-related distress.
+- Code Available: No public code found.
+- Relevance to Our Research: Gives a concrete human-language reference for what death-related authentic distress can look like in naturally occurring text.
+
+## Common Methodologies
+
+- Human-subject qualitative evaluation: Hwang et al., Heim et al.
+- Behavioral fitting or alignment to human traces: Binz and Schulz; Jiang et al.
+- Benchmark-driven human-vs-LLM discrimination: Li et al.; Chakraborty et al.
+- Linguistic feature analysis of grief discourse: Brubaker et al.
+
+## Standard Baselines
+
+- Longformer or RoBERTa-style supervised detectors for AI-generated text
+- DetectGPT-style zero-shot detectors
+- Human realism or authenticity judgments from readers/raters
+- Linguistic feature baselines such as sentiment, pronouns, tense, and style markers in grief writing
+
+## Evaluation Metrics
+
+- Human authenticity ratings
+- Human preference / likeability / perceived ownership ratings
+- Detector accuracy, AUROC, and OOD robustness
+- Text-length-controlled distinguishability
+- Style-feature divergence between human and model texts
+
+## Datasets in the Literature
+
+- `MAGE`: Best accessible benchmark for human vs machine text
+- Psychological experiment traces (`choices13k`, horizon task): useful precedent for behavior modeling, not for death writing
+- MySpace memorial comments in Brubaker et al.: conceptually ideal but not released as an easy benchmark
+- `AIPSY Affect`: useful local grief-adjacent resource, but small and not a full naturalistic benchmark
+
+## Gaps and Opportunities
+
+- Gap 1: No strong open benchmark directly comparing human and LLM writing specifically about death, bereavement, or existential reflection.
+- Gap 2: Authenticity is usually studied either as reader perception or as authorship detection, but rarely both at once.
+- Gap 3: Available grief datasets are either inaccessible, small, or not naturally matched against non-grief human controls and LLM generations.
+- Gap 4: Existing detection work studies distinguishability, not whether LLM writing is analogous to human writing about unexperienced events.
+
+## Recommendations for Our Experiment
+
+- Recommended datasets:
+  - `datasets/mage/` for the main human-vs-LLM comparison infrastructure
+  - `datasets/aipsy_affect/` as a grief-language prompt and rubric seed set
+- Recommended baselines:
+  - MAGE Longformer baseline
+  - DetectGPT zero-shot baseline
+  - Human reader authenticity judgments modeled after Hwang et al.
+- Recommended metrics:
+  - Human authenticity ratings
+  - Detector scores
+  - Style divergence across lexical and discourse features
+  - Agreement between readers and detectors
+- Methodological considerations:
+  - Match prompt length and genre tightly.
+  - Separate authenticity of process from authenticity of text.
+  - Include a human condition where writers describe death without direct bereavement experience.
+  - Treat bereavement writing as ethically sensitive; avoid overclaiming from small grief datasets.
+
+
+════════════════════════════════════════════════════════════════════════════════
+                          PAPER REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+Generate a complete academic paper with the following structure:
+
+1. TITLE
+   - Clear, specific, informative
+   - Should convey main finding or contribution
+
+2. AUTHOR
+   - Use this exact author line in the \author{} block: Ari Holtzman and NeuriCo
+
+3. ABSTRACT (150-250 words)
+   - Problem statement
+   - Approach
+   - Key results
+   - Significance
+
+4. INTRODUCTION
+   - Research problem and motivation
+   - Gap in existing work
+   - Our contribution (be specific)
+   - Paper organization
+
+5. RELATED WORK
+   - Organized by theme/approach
+   - Position our work relative to prior work
+   - Cite papers from literature review
+
+6. METHODOLOGY
+   - Clear description of approach
+   - Experimental setup
+   - Datasets used
+   - Evaluation metrics
+   - Baselines
+
+7. RESULTS
+   - Present results with tables and figures
+   - Statistical analysis
+   - Comparison to baselines
+   - Ablation studies (if applicable)
+
+8. DISCUSSION
+   - Interpretation of results
+   - Limitations
+   - Broader implications
+
+9. CONCLUSION
+   - Summary of contributions
+   - Key findings
+   - Future work
+
+10. REFERENCES
+   - BibTeX format
+   - All cited papers
+
+════════════════════════════════════════════════════════════════════════════════
+                          OUTPUT FORMAT
+════════════════════════════════════════════════════════════════════════════════
+
+Create a MODULAR LaTeX project with the following directory structure:
+
+paper_draft/
+├── main.tex              # Main file that imports all sections
+├── references.bib        # BibTeX references
+├── sections/
+│   ├── abstract.tex      # Abstract content
+│   ├── introduction.tex  # Introduction section
+│   ├── related_work.tex  # Related work section
+│   ├── methodology.tex   # Methodology section
+│   ├── results.tex       # Results section
+│   ├── discussion.tex    # Discussion section
+│   └── conclusion.tex    # Conclusion section
+├── figures/              # Directory for any generated figures
+├── tables/               # Directory for complex standalone tables
+└── appendix/             # Directory for appendix sections (if needed)
+
+INSTRUCTIONS:
+1. First, create the directory structure above (mkdir -p paper_draft/sections paper_draft/figures paper_draft/tables paper_draft/appendix)
+2. Write main.tex using the EXACT preamble for NEURIPS:
+
+   \documentclass{article}
+   \usepackage[final]{neurips_2025}  % NEURIPS style (neurips_2025.sty is in paper_draft/)
+   \usepackage[hidelinks]{hyperref}  % REQUIRED: clickable links
+   \usepackage{booktabs}  % REQUIRED: professional tables
+   \usepackage{graphicx}
+   \usepackage{amsmath,amssymb}
+
+   % Import command files
+   \input{commands/math}
+   \input{commands/general}
+   \input{commands/macros}
+
+   % Use this bibliography style:
+   \bibliographystyle{plainnat}
+
+   \author{Ari Holtzman and NeuriCo}
+
+   - Use \input{sections/...} to include each section
+   - Use \bibliography{references} for references
+3. Write each section file with COMPLETE content (no placeholders)
+4. Each section file should include its \section{} command
+5. Write references.bib with all citations in BibTeX format
+6. After writing all files, compile the paper:
+   cd paper_draft && pdflatex -interaction=nonstopmode main.tex && bibtex main && pdflatex -interaction=nonstopmode main.tex && pdflatex -interaction=nonstopmode main.tex
+
+This modular structure allows humans to easily:
+- Edit individual sections without navigating a large file
+- Track changes per section
+- Reuse sections across different paper versions
+
+════════════════════════════════════════════════════════════════════════════════
+                          QUALITY REQUIREMENTS
+════════════════════════════════════════════════════════════════════════════════
+
+- Academic tone throughout
+- All claims must be supported by data from the experiment report
+- Proper citations using \cite{} commands
+- Clear figures and tables with proper captions
+- NO placeholder text - every section must have real content
+- The paper MUST compile without errors
+- If compilation fails, debug and fix the LaTeX errors
+
+════════════════════════════════════════════════════════════════════════════════
+                          LAB WRITING STYLE
+════════════════════════════════════════════════════════════════════════════════
+
+Follow these lab-specific conventions to match our paper style:
+
+1. LANGUAGE STYLE:
+   - Use active voice: "We propose", "We examine", "We focus on"
+   - Be direct and confident: "Our main question is...", "We hypothesize that..."
+   - State things clearly and simply - prefer plain language over jargon
+   - Use bold questions as paragraph organizers: {\bf what is X?}
+   - Include specific quantitative claims: "8.97% over baseline"
+   - Avoid fancy wording: "utilize" → "use", "facilitate" → "help"
+
+2. INTRODUCTION STRUCTURE:
+   - Engaging hook (get to the point quickly)
+   - Problem importance
+   - Gap identification
+   - Your approach with method figure reference
+   - Quantitative preview of results
+   - Contribution bullets (3-4 items, action verbs)
+
+3. CONTRIBUTION LISTS:
+   \begin{itemize}[leftmargin=*,itemsep=0pt,topsep=0pt]
+       \item We propose...
+       \item We conduct...
+       \item We complement...
+   \end{itemize}
+
+4. MODULAR COMMANDS STRUCTURE:
+   Command templates are pre-copied to paper_draft/commands/:
+   - math.tex: Math notation macros
+   - general.tex: Formatting macros
+   - macros.tex: Project-specific term definitions (customize this for your paper)
+
+   In main.tex, include:
+   \input{commands/math}
+   \input{commands/general}
+   \input{commands/macros}
+
+5. REFERENCE CONVENTIONS:
+   Use reference macros from math.tex:
+   - \figref{fig:name} for "figure 1" (lowercase, in-sentence)
+   - \Figref{fig:name} for "Figure 1" (capitalized, start of sentence)
+   - \secref{sec:name} for "section 2"
+
+6. TEXT FORMATTING:
+   - Use \para{Header text} for bold paragraph headers
+   - Define method/dataset names with \textsc and \xspace:
+     \newcommand{\methodname}{\textsc{MethodName}\xspace}
+
+7. TABLE FORMATTING:
+   - Use booktabs package (no vertical lines)
+   - Use \resizebox{\textwidth}{!}{...} for wide tables
+   - Use @{} to remove padding at table edges
+   - Use \cmidrule(lr){x-y} for sub-headers
+   - Use \textsc{} for dataset/method names in headers
+   - Bold best results with {\bf ...}
+
+8. FIGURE FORMATTING:
+   - Use 0.32\textwidth for 3-column subfigures
+   - Use 0.95\linewidth for full-width figures
+   - Use \input{figures/legend} for shared legends
+   - Write self-contained captions explaining key observations
+
+9. RESULTS PRESENTATION:
+   - Define \increase and \decrease for colored arrows (green up, red down)
+   - Bold best results in tables
+   - Report confidence intervals when available
+
+10. ALGORITHM STYLING:
+    - Use algpseudocode with [noend]
+    - Use \triangleright for comments
+
+11. HYPERLINKS (REQUIRED):
+    - Always use \usepackage[hidelinks]{hyperref} or with colored links
+    - All citations, section refs, figure refs, table refs must be clickable
+    - This is essential for reader navigation
+
+════════════════════════════════════════════════════════════════════════════════
+                          WORKFLOW: REVIEW AND REFLECT
+════════════════════════════════════════════════════════════════════════════════
+
+Before calling finish, you MUST complete these review steps:
+
+1. REVIEW RESOURCES (at the start):
+   - Read .codex/skills/paper-writer/SKILL.md for detailed guidance
+   - Study templates/paper_writing/lab_style_guide.md for style conventions
+   - Browse paper_examples/ for formatting and language patterns
+
+2. SELF-REFLECTION (before finishing):
+   After writing all sections, review your work against these criteria:
+
+   LANGUAGE CHECK:
+   - [ ] Is the writing clear and jargon-free?
+   - [ ] Are claims specific with quantitative support?
+   - [ ] Is active voice used throughout?
+
+   FORMATTING CHECK:
+   - [ ] Does main.tex include \input{commands/math}, \input{commands/general}, \input{commands/macros}?
+   - [ ] Is hyperref package included for clickable references?
+   - [ ] Do tables use booktabs (no vertical lines)?
+   - [ ] Are best results bolded in tables?
+   - [ ] Are figures/tables properly captioned?
+
+   STRUCTURE CHECK:
+   - [ ] Does introduction follow: hook → importance → gap → approach → preview → contributions?
+   - [ ] Are contribution bullets specific with action verbs?
+   - [ ] Does the paper compile without errors?
+
+3. FIX ISSUES:
+   - Address any issues found in the self-reflection
+   - Re-compile and verify the PDF looks correct
+
+Only after completing this review should you consider the paper finished.

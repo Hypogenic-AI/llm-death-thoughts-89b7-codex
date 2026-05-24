@@ -1,0 +1,17 @@
+\section{Discussion}
+\label{sec:discussion}
+
+\para{What the pilot shows.}
+The central empirical result favors the analogy that motivated the study. Human grief passages are rated slightly more authentic than model passages, but the gap is small and does not increase for bereavement. If death were uniquely disqualifying because models lack firsthand experience of being dead, bereavement should have produced a visibly larger source gap than other grief. It did not. The source-by-domain interaction is effectively zero.
+
+\para{Why detector success does not settle authenticity.}
+At the same time, the detector result is not trivial and should not be explained away. Generated texts remain measurably separable from human texts, and the detector flags almost all model passages as machine. But that signal does not translate into strong authenticity penalties from judges. The most important conceptual takeaway is therefore a separation between two notions that are often collapsed in debate: {\bf detectable artifact} and {\bf judged inauthenticity}. A text can retain machine-like distributional traces without being read as emotionally implausible or textually hollow.
+
+\para{How to interpret the stylistic differences.}
+The style-feature analysis suggests that the remaining source differences are subtle. The model texts are somewhat longer, more lexically varied, and slightly less object-dense than the human passages. This is consistent with mild smoothing or regularization rather than a failure to anchor grief in concrete scenes. That interpretation fits the judge results: specificity stays high even when the detector still finds useful source cues.
+
+\para{Limitations.}
+This study is a pilot and should be read that way. The sample is small: 12 human texts and 24 generated texts. The human corpus comes from \aipsy, which is grief-relevant but vignette-like rather than a large naturalistic memorial corpus. The judges are themselves LLMs rather than human readers, and the rating rubric produces a clear ceiling effect, with most texts receiving scores between 4 and 5. The \mage detector is also out of domain for this exact task and produces many false positives on human grief passages. Finally, the generation pipeline does not log token-level cost data, so we cannot report a budget analysis.
+
+\para{Broader implications.}
+The result does not prove that LLM writing is authentic in every philosophically robust sense, and it does not erase genuine concerns about authorship, disclosure, or human experience. What it does undermine is a narrower empirical shortcut: the assumption that death, by itself, should expose LLM writing as categorically unlike human writing. In this pilot setting, it does not. That should push future debates toward more precise claims about process, audience expectations, and use context rather than treating lack of firsthand experience as a blanket disqualifier.

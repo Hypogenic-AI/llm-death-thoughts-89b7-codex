@@ -1,0 +1,16 @@
+\section{Related Work}
+\label{sec:related-work}
+
+\para{Authenticity in AI-assisted writing.}
+Recent work argues that authenticity in AI writing is not reducible to whether every token was produced without assistance. Hwang et al.\ study writers and readers interacting with personalized and non-personalized writing tools, finding that writers frame authenticity around voice, process, and value alignment rather than unaided production alone \citep{hwang2024authenticity}. This literature is important because it shifts the question from ``Was AI involved?'' to ``What kind of expression does the text sustain?'' Our setting differs in two ways: we study fully generated texts rather than co-writing, and we focus on bereavement as a stress test for the experience-based critique.
+
+\para{LLMs as models of human traces.}
+A second line of work shows that LLMs can reproduce human-like behavioral regularities even without sharing human experience. Binz and Schulz demonstrate that fine-tuned LLMs can function as cognitive models of human decision behavior \citep{binz2023cognitive}. Jiang et al.\ align LLMs directly to online human behavior traces using reinforcement learning with human behavior \citep{jiang2024real}. Heim et al.\ similarly show that synthetic knowledge-work documents can reach nontrivial levels of perceived realism under human evaluation \citep{heim2024authentic}. These results do not settle questions about grief writing, but they make the stronger anti-LLM claim less plausible: absence of firsthand phenomenology does not prevent models from approximating human textual behavior.
+
+\para{Detection and distinguishability.}
+Another literature asks a different question: whether machine-generated text can be distinguished from human text. The \mage benchmark broadens this problem across domains and source models, showing that detection becomes harder out of distribution but remains feasible in many settings \citep{li2024mage}. This distinction matters for our study because public debate often conflates detectability with inauthenticity. Our design therefore evaluates both at once. Unlike detection-only work, we ask whether texts that remain mechanically separable are also penalized by judges as less authentic.
+
+\para{Bereavement and grief language.}
+Finally, grief-language research provides a domain-specific anchor for what authentic bereavement writing can look like. Brubaker et al.\ show that distressed memorial writing is marked not only by sentiment terms but also by broader linguistic style \citep{brubaker2012grief}. That observation motivates our use of specificity and lightweight style features in addition to authenticity scores. We build on this work by comparing bereavement writing with other grief domains under matched prompting rather than studying bereavement in isolation.
+
+Taken together, prior work motivates our experiment but leaves its central claim open. Existing papers study authenticity, behavior modeling, detection, and bereavement language mostly in parallel. We connect them by testing whether death specifically enlarges the human-model authenticity gap.

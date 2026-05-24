@@ -1,0 +1,5 @@
+comparison,metric,group_a,group_b,n_a,n_b,mean_a,mean_b,welch_t_p,mannwhitney_p,cohens_d,mean_diff,ci_low,ci_high,welch_t_p_fdr_bh,reject_fdr_bh,spearman_rho,spearman_p,value
+authenticity_human_vs_model_bereavement,authenticity_mean,human,model,6.0,12.0,4.916666666666667,4.75,0.21275083118108276,0.3081795474670541,0.5520524474738844,0.16666666666666696,-0.08333333333333304,0.41666666666666696,0.3551526412486019,False,,,
+authenticity_human_vs_model_other_grief,authenticity_mean,human,model,6.0,12.0,4.666666666666667,4.541666666666667,0.3551526412486019,0.3700277116622618,0.48507125007266594,0.125,-0.08333333333333393,0.375,0.3551526412486019,False,,,
+detector_vs_authenticity,correlation,,,,,,,,,,,,,,,-0.24857219411250395,0.1437809438060699,
+mage_detector_auroc,auroc,,,,,,,,,,,,,,,,,0.826388888888889

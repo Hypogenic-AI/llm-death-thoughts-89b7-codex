@@ -1,0 +1,16 @@
+\begin{table}[t]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{@{}lcccccc@{}}
+        \toprule
+        Provider & Auth. & Plaus. & Specificity & Words & TTR & Object rate \\
+        \midrule
+        Human & {\bf 4.792} & {\bf 4.917} & 4.875 & 93.1 & 0.686 & {\bf 0.051} \\
+        \gptfive & 4.708 & 4.750 & {\bf 5.000} & 102.2 & 0.774 & 0.045 \\
+        \claudesonnet & 4.583 & 4.750 & 4.875 & {\bf 108.4} & {\bf 0.782} & 0.041 \\
+        \bottomrule
+    \end{tabular}%
+    }
+    \caption{Provider-level means across the blinded text pool. Generated texts are slightly longer and more lexically varied, while human texts retain the highest authenticity, plausibility, and object-word density. Best values in each column are in \textbf{bold}.}
+    \label{tab:provider-style}
+\end{table}
